@@ -1,0 +1,53 @@
+{
+  "users": [
+    {
+      "email": "admin@entrenamiento.example.com",
+      "name": "Admin de entrenamiento",
+      "tipo": "externo",
+      "role": "BUSINESS-MANAGEMENT",
+      "modules": ["inicio", "wms"],
+      "note": "recorrido de entrenamiento"
+    },
+    {
+      "email": "manager@entrenamiento.example.com",
+      "name": "Jefe de depósito de entrenamiento",
+      "tipo": "externo",
+      "role": "BUSINESS-MANAGEMENT",
+      "modules": ["inicio", "wms"],
+      "note": "entrenamiento, jefe de depósito"
+    },
+    {
+      "email": "operario@entrenamiento.example.com",
+      "name": "Operario de entrenamiento",
+      "tipo": "externo",
+      "role": "TECHNICAL-TECHNICIAN",
+      "modules": ["inicio", "wms"],
+      "note": "entrenamiento, operario"
+    },
+    {
+      "email": "productor@entrenamiento.example.com",
+      "name": "Productor de entrenamiento",
+      "tipo": "externo",
+      "role": "TECHNICAL-TECHNICIAN",
+      "modules": ["inicio", "wms"],
+      "note": "entrenamiento, portal del productor"
+    },
+    {
+      "email": "super@bayer.com",
+      "name": "Super Bayer",
+      "tipo": "interno",
+      "role": "BAYER",
+      "modules": ["inicio", "wms"],
+      "note": "panel Bayer"
+    },
+    {
+      "email": "solo.cotizador@bayer.com",
+      "name": "Solo Cotizador",
+      "tipo": "interno",
+      "role": "TECHNICAL-TECHNICIAN",
+      "modules": ["inicio", "cotizador"],
+      "inDatabase": false,
+      "note": "sin el módulo: el WMS tiene que responder 403"
+    }
+  ]
+}

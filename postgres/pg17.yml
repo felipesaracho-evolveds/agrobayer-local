@@ -1,0 +1,20 @@
+# Postgres 17 for every module that runs on 17 in GCP. One database per module, created by
+# lib/ensure-db.mjs. Data survives restarts in the named volume.
+services:
+  pg17:
+    image: postgres:17
+    container_name: agb-pg17
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5417:5432"
+    volumes:
+      - agb-pg17-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  agb-pg17-data:

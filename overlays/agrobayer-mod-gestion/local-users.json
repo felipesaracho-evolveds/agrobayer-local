@@ -1,0 +1,381 @@
+{
+  "users": [
+    {
+      "email": "rv.interno@bayer.com",
+      "name": "Interno Admin",
+      "tipo": "interno",
+      "role": "ADMIN",
+      "modules": [
+        "inicio",
+        "capacitaciones",
+        "campana-fieldview",
+        "salesforce-local",
+        "salesforce-global",
+        "fieldview-dealer",
+        "experto-bayer",
+        "gestion",
+        "finanzas",
+        "pedidos",
+        "canje-granos",
+        "cotizador",
+        "eva-chatbot"
+      ],
+      "sub": "u-admin",
+      "claims": {
+        "scope": {
+          "gestion": {
+            "roles": [
+              "ALL"
+            ],
+            "rvEmail": "rv.interno@bayer.com",
+            "isAdmin": true
+          }
+        }
+      },
+      "note": "admin"
+    },
+    {
+      "email": "rv.comercial@bayer.com",
+      "name": "Interno Comercial",
+      "tipo": "interno",
+      "role": "BUSINESS-MANAGEMENT",
+      "modules": [
+        "inicio",
+        "gestion",
+        "finanzas",
+        "pedidos",
+        "canje-granos",
+        "capacitaciones"
+      ],
+      "sub": "u-normal",
+      "claims": {
+        "scope": {
+          "gestion": {
+            "roles": [
+              "ALL"
+            ],
+            "rvEmail": "rv.comercial@bayer.com"
+          }
+        }
+      },
+      "note": "normal"
+    },
+    {
+      "email": "distribuidor@acme.com.ar",
+      "name": "Distribuidora ACME",
+      "tipo": "externo",
+      "role": "TECHNICAL-TECHNICIAN",
+      "modules": [
+        "inicio",
+        "gestion",
+        "canje-granos",
+        "capacitaciones"
+      ],
+      "sub": "u-distri",
+      "claims": {
+        "scope": {
+          "gestion": {
+            "roles": [
+              "Distribuidores"
+            ],
+            "rvEmail": "distribuidor@acme.com.ar"
+          }
+        }
+      },
+      "note": "distribuidor"
+    },
+    {
+      "email": "admin.externo@acme.com.ar",
+      "name": "Admin Externo",
+      "tipo": "externo",
+      "role": "ADMIN",
+      "modules": [
+        "inicio",
+        "capacitaciones",
+        "campana-fieldview",
+        "salesforce-local",
+        "salesforce-global",
+        "fieldview-dealer",
+        "experto-bayer",
+        "gestion",
+        "finanzas",
+        "pedidos",
+        "canje-granos",
+        "cotizador",
+        "eva-chatbot"
+      ],
+      "sub": "u-adminext",
+      "claims": {
+        "entitlements": {
+          "site": {
+            "accounts": [
+              {
+                "sapId": "1826921",
+                "cuit": "30708920130"
+              }
+            ]
+          }
+        }
+      },
+      "note": "admin-externo"
+    },
+    {
+      "email": "rv.ventas@bayer.com",
+      "name": "Representante de Ventas",
+      "tipo": "interno",
+      "role": "RV",
+      "modules": [
+        "inicio",
+        "gestion"
+      ],
+      "sub": "u-rv",
+      "claims": {
+        "scope": {
+          "gestion": {
+            "rvEmail": "rv.ventas@bayer.com"
+          }
+        }
+      },
+      "note": "rv"
+    },
+    {
+      "email": "rv.norte@bayer.com",
+      "name": "RV con BU y Squad",
+      "tipo": "interno",
+      "role": "RV",
+      "modules": [
+        "inicio",
+        "gestion"
+      ],
+      "sub": "u-rv2",
+      "claims": {
+        "scope": {
+          "gestion": {
+            "rvEmail": "rv.norte@bayer.com",
+            "bu": [
+              "BU NORTE"
+            ],
+            "squad": [
+              "S1-NOA"
+            ]
+          }
+        }
+      },
+      "note": "rv-con-scope"
+    },
+    {
+      "email": "usuario.bayer@bayer.com",
+      "name": "Usuario Bayer",
+      "tipo": "interno",
+      "role": "BAYER",
+      "modules": [
+        "inicio",
+        "gestion"
+      ],
+      "sub": "u-bayer",
+      "claims": {
+        "entitlements": {
+          "site": {
+            "accounts": [
+              {
+                "sapId": "1826921",
+                "cuit": "30708920130"
+              }
+            ]
+          }
+        },
+        "scope": {
+          "gestion": {
+            "rvEmail": "usuario.bayer@bayer.com",
+            "bu": [
+              "BU NORTE"
+            ],
+            "squad": [
+              "S1-NOA"
+            ]
+          }
+        }
+      },
+      "note": "bayer"
+    },
+    {
+      "email": "owner@bayer.com",
+      "name": "Owner Con CUIT",
+      "tipo": "interno",
+      "role": "OWNER",
+      "modules": [
+        "inicio",
+        "gestion"
+      ],
+      "sub": "u-owner",
+      "claims": {
+        "entitlements": {
+          "site": {
+            "accounts": [
+              {
+                "sapId": "1826921",
+                "cuit": "30708920130"
+              }
+            ]
+          }
+        }
+      },
+      "note": "owner"
+    },
+    {
+      "email": "owner.sincuit@bayer.com",
+      "name": "Owner Sin CUIT",
+      "tipo": "interno",
+      "role": "OWNER",
+      "modules": [
+        "inicio",
+        "gestion"
+      ],
+      "sub": "u-owner2",
+      "note": "owner-sin-cuit"
+    },
+    {
+      "email": "interno.uncuit@bayer.com",
+      "name": "Interno Con Un CUIT",
+      "tipo": "interno",
+      "role": "BUSINESS-MANAGEMENT",
+      "modules": [
+        "inicio",
+        "gestion"
+      ],
+      "sub": "u-uncuit",
+      "claims": {
+        "entitlements": {
+          "site": {
+            "accounts": [
+              {
+                "sapId": "1826921",
+                "cuit": "30708920130"
+              }
+            ]
+          }
+        }
+      },
+      "note": "un-cuit"
+    },
+    {
+      "email": "interno.sindatos@bayer.com",
+      "name": "Interno CUIT Sin Datos",
+      "tipo": "interno",
+      "role": "BUSINESS-MANAGEMENT",
+      "modules": [
+        "inicio",
+        "gestion"
+      ],
+      "sub": "u-cuitsindatos",
+      "claims": {
+        "entitlements": {
+          "site": {
+            "accounts": [
+              {
+                "sapId": "9999999",
+                "cuit": "99999999999"
+              }
+            ]
+          }
+        }
+      },
+      "note": "cuit-sin-datos"
+    },
+    {
+      "email": "interno.varios@bayer.com",
+      "name": "Interno Con Varios CUIT",
+      "tipo": "interno",
+      "role": "BUSINESS-MANAGEMENT",
+      "modules": [
+        "inicio",
+        "gestion"
+      ],
+      "sub": "u-varioscuit",
+      "claims": {
+        "entitlements": {
+          "site": {
+            "accounts": [
+              {
+                "sapId": "9999999",
+                "cuit": "99999999999"
+              },
+              {
+                "sapId": "1111111",
+                "cuit": "30626586186"
+              },
+              {
+                "sapId": "1826921",
+                "cuit": "30708920130"
+              }
+            ]
+          }
+        }
+      },
+      "note": "varios-cuit"
+    },
+    {
+      "email": "solo.cotizador@bayer.com",
+      "name": "Solo Cotizador",
+      "tipo": "interno",
+      "modules": [
+        "inicio",
+        "cotizador"
+      ],
+      "sub": "u-ajeno",
+      "claims": {
+        "scope": {
+          "cotizador": {
+            "rvEmail": "solo.cotizador@bayer.com"
+          }
+        }
+      },
+      "note": "ajeno"
+    },
+    {
+      "email": "sin.rol@bayer.com",
+      "name": "Interno Sin Rol",
+      "tipo": "interno",
+      "modules": [
+        "inicio",
+        "gestion"
+      ],
+      "sub": "u-sinrol",
+      "claims": {
+        "scope": {
+          "gestion": {
+            "roles": [
+              "ALL"
+            ],
+            "rvEmail": "sin.rol@bayer.com"
+          }
+        }
+      },
+      "note": "sin-rol"
+    },
+    {
+      "email": "distribuidor.qa@evolveds.ai",
+      "name": "Distribuidor Con Entitlements",
+      "tipo": "externo",
+      "role": "TECHNICAL-TECHNICIAN",
+      "modules": [
+        "inicio",
+        "gestion"
+      ],
+      "sub": "u-entitlements",
+      "claims": {
+        "entitlements": {
+          "site": {
+            "accounts": [
+              {
+                "sapId": "1826921",
+                "cuit": "30708920130"
+              }
+            ]
+          }
+        }
+      },
+      "note": "entitlements"
+    }
+  ]
+}
