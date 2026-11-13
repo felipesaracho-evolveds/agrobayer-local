@@ -171,18 +171,24 @@ const esc = (s) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`)
 const routeFor = (path) =>
   ROUTES.find((r) => path === r.path || path.startsWith(`${r.path}/`));
 
-/** Where to land after login: /inicio when it runs, else the first open module. */
-function defaultTarget() {
-  const inicio = ROUTES.find((r) => r.id === 'inicio' && isOpen(r.id));
-  const first = inicio ?? ROUTES.find((r) => isOpen(r.id));
-  return first ? `${first.path}/` : '/';
+/**
+ * Where to land after login when nobody asked for a page: /inicio when it runs and the user
+ * has it, else the first open module the user has. A user with none of the running modules
+ * (the "without the module → 403" test users) lands on the module that declared them, which
+ * is exactly where that 403 has to show up.
+ */
+function defaultTarget(user) {
+  const open = (ids) => ROUTES.filter((r) => isOpen(r.id) && ids.includes(r.id));
+  const own = open(user.modules ?? []);
+  const target = own.find((r) => r.id === 'inicio') ?? own[0] ?? open(user.sources)[0];
+  return target ? `${target.path}/` : '/';
 }
 
-/** Only paths of this same origin: no `//other-site` nor absolute URLs. */
-const safeNext = (next) =>
+/** Only paths of this same origin: no `//other-site` nor absolute URLs. Otherwise null. */
+const validNext = (next) =>
   typeof next === 'string' && next.startsWith('/') && !next.startsWith('//') && !next.includes('\\')
     ? next
-    : defaultTarget();
+    : null;
 
 /**
  * Transparent forward to the module. Keeps the portal Host and adds `x-forwarded-*`, so the
@@ -251,7 +257,9 @@ function home(current, next) {
     const why = s.status === 'blocked' ? `<pre style="white-space:pre-wrap;color:var(--agb-color-text-muted)">${esc(s.detail)}</pre>` : '';
     return `<li>${link} <code>${esc(r.path)}</code> · ${STATUS_LABEL[s.status] ?? s.status}${why}</li>`;
   }).join('\n');
-  const users = visibleUsers().map((u) => `<li><a href="/api/auth/login?as=${userKey(u)}&next=${encodeURIComponent(next)}"><strong>${esc(u.name ?? u.email)}</strong></a>
+  // `next` only when a module sent the user here; otherwise each user lands on one of THEIR modules.
+  const back = next ? `&next=${encodeURIComponent(next)}` : '';
+  const users = visibleUsers().map((u) => `<li><a href="/api/auth/login?as=${userKey(u)}${back}"><strong>${esc(u.name ?? u.email)}</strong></a>
     — <code>${esc(u.email)}</code> · ${esc(u.sources.join(', '))}${u.note ? ` · ${esc(u.note)}` : ''}</li>`).join('\n');
   return page('Portal local', `
 <p>Sesión actual: <strong>${current ? `${esc(current.name)} &lt;${esc(current.email)}&gt;` : 'ninguna'}</strong>
@@ -284,18 +292,18 @@ const server = createServer((req, res) => {
   if (path === '/tokens.css') return forwardTokens(res);
 
   if (path === '/api/auth/login') {
-    const next = safeNext(url.searchParams.get('next'));
+    const next = validNext(url.searchParams.get('next'));
     const who = url.searchParams.get('as');
     // Without `as` (a module's middleware sends people here) the user is picked on the home page.
     if (!who) {
-      res.writeHead(302, { location: `/?next=${encodeURIComponent(next)}` });
+      res.writeHead(302, { location: next ? `/?next=${encodeURIComponent(next)}` : '/' });
       return res.end();
     }
     const u = visibleUsers().find((x) => userKey(x) === who);
     if (!u) return json(res, 400, { error: `Unknown or unavailable user: ${who}` });
     res.writeHead(302, {
       'set-cookie': `${COOKIE}=${signSession(u)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${TTL_SECONDS}`,
-      location: next,
+      location: next ?? defaultTarget(u),
     });
     return res.end();
   }
@@ -311,7 +319,7 @@ const server = createServer((req, res) => {
 
   if (path === '/api/auth/me') {
     const s = session(req);
-    if (!s) return json(res, 401, { authenticated: false, loginUrl: `/api/auth/login?next=${defaultTarget()}` });
+    if (!s) return json(res, 401, { authenticated: false, loginUrl: '/api/auth/login' });
     return json(res, 200, {
       authenticated: true,
       user: { email: s.email, name: s.name, initials: initials(s.name) },
@@ -336,7 +344,7 @@ const server = createServer((req, res) => {
   if (route) return isOpen(route.id) ? forward(route, req, res) : html(res, 503, blockedPage(route));
 
   if (path === '/' || path === '/inicio' || path === '/inicio/') {
-    return html(res, 200, home(session(req), safeNext(url.searchParams.get('next'))));
+    return html(res, 200, home(session(req), validNext(url.searchParams.get('next'))));
   }
 
   return html(res, 404, page('Acá no hay nada', `

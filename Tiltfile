@@ -136,6 +136,7 @@ local_resource(
     'portal',
     serve_cmd=['node', os.path.join(ROOT, 'portal', 'portal.mjs')],
     serve_dir=ROOT,
+    deps=[os.path.join(ROOT, 'portal')],
     serve_env={
         'PORTAL_PORT': str(PORTAL_PORT),
         'AGB_ROUTES': str(encode_json(_routes)),
