@@ -63,3 +63,48 @@ corré el seed del módulo en Tilt; el chequeo vuelve a correr solo.
 |---|---|---|---|
 | `wms` | wms-backend, wms-frontend | Postgres 17, schema `wms_app` | Seed manual: `wms-seed` |
 | `gestion` | gestion | — (BigQuery) | Necesita `gcloud auth application-default login` para ver datos |
+
+## Investigado, sin implementar
+
+### Identidad real en lugar del emulador
+
+Hoy el portal firma las sesiones con los usuarios de `local-users.json`. La alternativa es
+levantar `agrobayer-auth-host` como pieza de plataforma y que el portal le delegue la
+identidad, quedándose solo con el ruteo:
+
+```
+:8080 portal ─┬─ /{módulo}/*                         → cada módulo (igual que hoy)
+              └─ /api/auth/*, JWKS, /api/shell/nav  → auth-host real
+```
+
+Lo que el auth-host ya trae, según su README:
+
+- Un IdP simulado (`AGB_IDP_SIMULADO=true`, el valor por defecto) que hace el mismo flujo OIDC
+  que Gigya: Authorization Code + PKCE.
+- Los permisos de desarrollo en `authz.seed.json`: una fila por persona con `tipo`, `activo`,
+  `modules[]` y `role`. En despliegue los reemplaza `identity-api`, con la misma lógica.
+
+| | Emulador (hoy) | auth-host real |
+|---|---|---|
+| Qué reproduce | El contrato de la sesión | El login completo (OIDC, PKCE, logout, menú real) y la lógica de permisos |
+| De dónde salen los usuarios | `local-users.json` de cada módulo | `authz.seed.json`: un archivo central de plataforma, no de cada módulo |
+| Claims propios de un módulo | Sí: gestion manda `scope` y `entitlements`, que sus usuarios de prueba necesitan | El README del auth-host marca `scope` como **deprecado**. Sin verificar si emite `entitlements` |
+
+Recomendación: tener los dos modos. El emulador por defecto, para desarrollar rápido, y el
+auth-host real cuando haga falta probar el login o los permisos de punta a punta. El chequeo de
+usuarios de cada módulo sirve igual en los dos: solo cambia de dónde salen los emails.
+
+### Módulos que no declaran usuarios
+
+Ya está soportado: un módulo que no llama a `agb.users(...)` no tiene chequeo y se monta apenas
+su proceso responde.
+
+Lo que hay que tener en cuenta es **quién puede entrar**. Los módulos que siguen el contrato del
+Shell exigen que la sesión traiga su id en `modules[]`. Si ningún módulo levantado declara
+usuarios con ese id, nadie entra: todos reciben `403`. Un módulo público, que no valida sesión,
+funciona sin login.
+
+Propuesta: que el portal sume siempre un usuario genérico, **"Dev (todos los módulos)"**, con
+todos los módulos levantados. Así ningún módulo está obligado a declarar usuarios. Límite: en los
+módulos que buscan el perfil en su base, como WMS, ese email no existe y la pantalla muestra
+"Sin perfil". Para esos casos siguen estando los usuarios que declara el módulo.
